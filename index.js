@@ -20,21 +20,21 @@ async function run() {
         //database
         await client.connect();
         const database = client.db("smartEyeGlassed");
-        const usersCollection = database.collection("products");
+        const productsCollection = database.collection("products");
         const ordersCollection = database.collection("orders");
         const adminsCollection = database.collection("admin");
         const reviewCollection = database.collection("review");
 
-        // server all user product
+        // home product 
         app.get('/homepageProduct', async(req, res) => {
-            const curser = usersCollection.find({}).limit(6)
+            const curser = productsCollection.find({}).limit(6)
             const users = await curser.toArray()
             res.send(users)
         })
 
-
+        // navbar explore product
         app.get('/exploreProduct', async(req, res) => {
-            const curser = usersCollection.find({})
+            const curser = productsCollection.find({})
             const users = await curser.toArray()
             res.send(users)
         })
@@ -43,32 +43,32 @@ async function run() {
         app.get('/showusers/:id', async(req, res) => {
             const id = req.params.id;
             const query = {_id: ObjectId(id)}
-            const result = await usersCollection.findOne(query)
+            const result = await productsCollection.findOne(query)
             res.json(result)
         })
 
-        // server product add
+        // dashboard add product
         app.post('/addProduct', async(req, res) => {
             const newUser = req.body;
-            const result = await usersCollection.insertOne(newUser)
+            const result = await productsCollection.insertOne(newUser)
             res.json(result)
         })
 
-        // home service button
+        // homepage product button
         app.post('/buynow', async(req, res) => {
             const buy = req.body;
             const result = await ordersCollection.insertOne(buy)
             res.json(result)
         })
 
-        // home service button user product show
+        // dashboard my orders
         app.get('/myOrders', async(req, res) => {
             const curser = ordersCollection.find({})
             const users = await curser.toArray()
             res.send(users)
         })
         
-        // home service button user product delete
+        // dashboard my orders cancel button
         app.delete('/myOrders/:id', async(req, res) => {
             const id = req.params.id;
             const query = {_id: ObjectId(id)}
@@ -76,10 +76,11 @@ async function run() {
             res.send(result)
         })
 
+        // 
         app.delete('/exploreProduct/:id', async(req, res) => {
             const id = req.params.id;
             const query = {_id: ObjectId(id)}
-            const result =  await usersCollection.deleteOne(query)
+            const result =  await productsCollection.deleteOne(query)
             res.send(result)
         })
 
@@ -97,59 +98,51 @@ async function run() {
                 });
         });
 
-
+        // homepage review
         app.get('/review', async(req, res) => {
             const curser = reviewCollection.find({})
             const users = await curser.toArray()
             res.send(users)
         })
 
-
+        // dasboard add review
         app.post("/addReview", async (req, res) => {
             const result = await reviewCollection.insertOne(req.body);
             res.send(result);
         });
 
-
+        // register user info
         app.post("/addUserInfo", async (req, res) => {
             console.log("req.body");
             const result = await adminsCollection.insertOne(req.body);
             res.send(result);
-            console.log(result);
         });
 
+        // dashboard make admin
         app.put("/makeAdmin", async (req, res) => {
             const filter = { email: req.body.email };
             const result = await adminsCollection.find(filter).toArray();
-
-
-
             if (result) {
-              const documents = await adminsCollection.updateOne(filter, {
+                const documents = await adminsCollection.updateOne(filter, {
                 $set: { role: "admin" },
-              });
-            //   console.log(documents);
+                });
             }
             else {
-              const role = "admin";
-              const result3 = await adminsCollection.insertOne(req.body.email, {
+                const role = "admin";
+                const result3 = await adminsCollection.insertOne(req.body.email, {
                 role: role,
                 $set: {email: result3}
-              });
+                });
             }
-        
-            // console.log(result);
         });
 
-          app.get("/makeAdmin/:email", async (req, res) => {
-            const result = await adminsCollection
-              .find({ email: req.params.email })
-              .toArray();
-            console.log(result);
+        // dashboard make admin
+        app.get("/makeAdmin/:email", async (req, res) => {
+        const result = await adminsCollection
+            .find({ email: req.params.email })
+            .toArray();
             res.send(result);
-          });
-        
-        
+        });
         } finally {
         // await client.close();
         }
@@ -160,10 +153,10 @@ run().catch(console.dir);
 
 // default 
 app.get('/', (req, res) => {
-    res.send('Travel Tour Agency');
+    res.send('Smart Eye Glassed');
 })
 
 //port
 app.listen(port, () => {
-    console.log('agency server running', port)
+    console.log('glassed server running', port)
 })
