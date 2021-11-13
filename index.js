@@ -123,16 +123,18 @@ async function run() {
             const filter = { email: req.body.email };
             const result = await adminsCollection.find(filter).toArray();
             if (result) {
-                const documents = await adminsCollection.updateOne(filter, {
+                const adminRole = await adminsCollection.updateOne(filter, {
                 $set: { role: "admin" },
                 });
+                res.send(adminRole)
             }
             else {
                 const role = "admin";
-                const result3 = await adminsCollection.insertOne(req.body.email, {
+                const newAdmin = await adminsCollection.insertOne(req.body.email, {
                 role: role,
-                $set: {email: result3}
+                $set: {email: role}
                 });
+                res.send(newAdmin)
             }
         });
 
