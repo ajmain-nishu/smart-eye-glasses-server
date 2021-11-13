@@ -19,8 +19,8 @@ async function run() {
 
         //database
         await client.connect();
-        const database = client.db("foodMaster");
-        const usersCollection = database.collection("hero");
+        const database = client.db("smartEyeGlassed");
+        const usersCollection = database.collection("products");
         const ordersCollection = database.collection("orders");
         const adminsCollection = database.collection("admin");
         const reviewCollection = database.collection("review");
